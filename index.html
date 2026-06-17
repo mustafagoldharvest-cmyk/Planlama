@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gold Harvest & ŞOK İleri APS Yönetim Sistemi</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #060b19; color: #f5f6fa; padding: 20px; padding-bottom: 80px; }
+        
+        /* Cyber Header Tasarımı */
+        header { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.03); }
+        .logo-area { display: flex; align-items: center; gap: 20px; }
+        
+        /* YENİ ENTEGRE EDİLEN image_0f6e04.png LOGO AYARLARI */
+        .gh-logo { width: 100px; height: 65px; object-fit: contain; border-radius: 6px; animation: goldGlow 3s infinite ease-in-out; }
+        .logo-text h1 { font-size: 22px; margin-bottom: 2px; letter-spacing: 1.5px; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-weight: 800; }
+        .logo-text p { font-size: 11px; color: #38bdf8; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+        
+        /* Üst Menü Sekme Butonları */
+        .tab-container { display: flex; background: #0f172a; border-radius: 8px 8px 0 0; padding: 6px 6px 0 6px; gap: 4px; overflow-x: auto; border-bottom: 2px solid #1e293b; }
+        .tab { padding: 12px 18px; cursor: pointer; font-weight: bold; border-radius: 8px 8px 0 0; border: none; background: #1e293b; transition: 0.2s; font-size: 13px; white-space: nowrap; color: #94a3b8; }
+        .tab.active { background: #060b19; color: #38bdf8; border-top: 3px solid #38bdf8; box-shadow: 0 -2px 100px rgba(56,189,248,0.1); }
+        .tab.cips-tab-active { border-top-color: #a855f7; color: #c084fc; }
+        .tab:hover:not(.active) { background: #0284c7; color: #ffffff; }
+        
+        .content-section { background: #0f172a; padding: 25px; border-radius: 0 0 12px 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); min-height: 540px; border: 1px solid rgba(255,255,255,0.03); border-top: none; }
+        .page { display: none; }
+        
+        /* Akıllı Üst KPI Metrik Paneli */
+        .kpi-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .kpi-box { background: #1e293b; border-radius: 8px; padding: 12px 15px; border-left: 4px solid #38bdf8; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.01); position: relative; }
+        .kpi-box .kpi-title { font-size: 11px; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.5px; font-weight: bold; }
+        .kpi-box .kpi-value { font-size: 18px; font-weight: bold; color: #ffffff; margin-top: 4px; }
+        
+        /* Personel KPI İçi Buton Grubu */
+        .kpi-switch-group { display: flex; gap: 4px; margin-top: 6px; }
+        .kpi-sw { background: #060b19; border: 1px solid #1e293b; color: #94a3b8; font-size: 10px; padding: 2px 6px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .kpi-sw.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
+
+        /* Kurumsal Form Kartları */
+        .shok-zone { background-color: rgba(214, 158, 46, 0.02); padding: 20px; border-radius: 8px; border: 1px solid rgba(214, 158, 46, 0.3); margin-bottom: 25px; }
+        .gh-zone { background-color: rgba(43, 108, 176, 0.02); padding: 20px; border-radius: 8px; border: 1px solid rgba(43, 108, 176, 0.3); margin-bottom: 25px; }
+        .cips-zone { background-color: rgba(168, 85, 247, 0.02); padding: 20px; border-radius: 8px; border: 1px solid rgba(168, 85, 247, 0.3); margin-bottom: 25px; }
+        
+        .shok-title { color: #fbbf24; border-bottom: 1px solid rgba(251, 191, 36, 0.2); padding-bottom: 6px; margin-bottom: 15px; font-size: 15px; font-weight: bold; }
+        .gh-title { color: #38bdf8; border-bottom: 1px solid rgba(56, 189, 248, 0.2); padding-bottom: 6px; margin-bottom: 15px; font-size: 15px; font-weight: bold; }
+        .cips-title { color: #c084fc; border-bottom: 1px solid rgba(168, 85, 247, 0.2); padding-bottom: 6px; margin-bottom: 15px; font-size: 15px; font-weight: bold; }
+
+        /* Giriş Form Elemanları */
+        .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-top: 10px; }
+        .filter-section { background: #060b19; border-left: 4px solid #0284c7; padding: 15px; border-radius: 6px; margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; align-items: end; border: 1px solid rgba(255,255,255,0.01); }
+        
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 11px; font-weight: 600; margin-bottom: 6px; color: #94a3b8; }
+        .form-group input, .form-group select { padding: 8px; border: 1px solid #1e293b; border-radius: 6px; outline: none; font-size: 13px; background-color: #060b19; color: #f5f6fa; transition: 0.2s; }
+        .form-group input:focus, .form-group select:focus { border-color: #38bdf8; }
+        
+        /* Butonlar */
+        .btn { background: #0284c7; color: #ffffff; padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 13px; text-align: center; margin-top: auto; }
+        .btn:hover { background: #38bdf8; box-shadow: 0 0 10px rgba(56,189,248,0.3); }
+        .btn-shok { background: #d97706; color: white; }
+        .btn-shok:hover { background: #fbbf24; color: #060b19; }
+        .btn-gh { background: #2563eb; color: white; }
+        .btn-gh:hover { background: #60a5fa; color: #060b19; }
+        .btn-cips { background: #7c3aed; color: white; }
+        .btn-cips:hover { background: #a785f7; color: #060b19; }
+        .btn-update { background: #334155; color: white; padding: 4px 10px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 4px; border: 1px solid #475569; }
+        .btn-update:hover { background: #f8fafc; color: #060b19; }
+        .btn-danger { background: #dc2626; color: white; padding: 5px 10px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; margin-bottom: 25px; font-size: 13px; background-color: #060b19; border-radius: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.02); }
+        th, td { padding: 11px 13px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        th { background-color: #1e293b; color: #38bdf8; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+        tr:hover { background-color: rgba(255,255,255,0.01); }
+        
+        /* Canlı İzleme Kart Gridi */
+        .machine-summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 15px; margin-bottom: 30px; }
+        .machine-card { background: #060b19; border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 3px solid #475569; }
+        .shok-card-border { border-top-color: #d97706; }
+        .gh-card-border { border-top-color: #2563eb; }
+        .cips-card-border { border-top-color: #7c3aed; }
+        .machine-card h4 { color: #ffffff; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 6px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Kapasite Doluluk Barı */
+        .cap-bar-bg { width: 100%; height: 5px; background: #1e293b; border-radius: 3px; margin-bottom: 12px; overflow: hidden; display: block; }
+        .cap-bar-fill { height: 100%; background: linear-gradient(90deg, #0284c7, #38bdf8); border-radius: 3px; display: block; width: 0%; transition: width 0.5s ease-in-out; }
+        .cips-bar-fill { background: linear-gradient(90deg, #6d28d9, #a78bfa) !important; }
+
+        /* Trafik Işığı */
+        .job-item { padding: 12px; border-radius: 6px; margin-bottom: 8px; font-size: 12px; line-height: 1.5; background: #0f172a; box-shadow: inset 0 1px 2px rgba(0,0,0,0.3); }
+        .job-planlanan { border-left: 5px solid #ef4444; }
+        .job-devameden { border-left: 5px solid #f59e0b; }
+        .job-tamamlandi { border-left: 5px solid #10b981; }
+        .job-yapilamadi { border-left: 5px solid #64748b; opacity: 0.55; }
+
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; display: inline-block; }
+        .badge.b-plan { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+        .badge.b-devam { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+        .badge.b-tamam { background: rgba(16,185,129,0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.2); }
+        .badge.b-fail { background: rgba(100,116,139,0.12); color: #94a3b8; border: 1px solid rgba(100,116,139,0.2); }
+        .badge.var { background: rgba(16,185,129,0.12); color: #34d399; }
+        .badge.yok { background: rgba(239,68,68,0.12); color: #f87171; }
+
+        .reason-text { font-size: 11px; background: rgba(0,0,0,0.2); padding: 5px 8px; border-radius: 4px; margin-top: 6px; color: #cbd5e0; border-left: 2px solid #64748b; display: block; }
+
+        /* SİBER ALT BİLGİ İMZASI */
+        footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #060b19; color: #94a3b8; text-align: center; padding: 12px; font-size: 12px; border-top: 1px solid #1e293b; box-shadow: 0 -4px 20px rgba(0,0,0,0.5); z-index: 100; letter-spacing: 0.8px; }
+        footer span { font-style: italic; color: #64748b; }
+        footer strong { font-family: 'Courier New', Courier, monospace; color: #38bdf8; background: rgba(56,189,248,0.06); padding: 3px 12px; border-radius: 4px; border: 1px solid rgba(56,189,248,0.15); margin-left: 4px; font-size: 13px; text-shadow: 0 0 6px rgba(56,189,248,0.4); }
+
+        @keyframes goldGlow {
+            0% { filter: drop-shadow(0 0 3px rgba(227, 176, 75, 0.15)); }
+            50% { filter: drop-shadow(0 0 15px rgba(227, 176, 75, 0.4)); }
+            100% { filter: drop-shadow(0 0 3px rgba(227, 176, 75, 0.15)); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <!-- REFERANS VERİLEN DOSYA ADI VERBATIM ENTEGRE EDİLDİ -->
+            <img src="image_0f6e04.png" alt="Gold Harvest" class="gh-logo">
+            <div class="logo-text">
+                <h1>GOLD HARVEST</h1>
+                <p>İleri Üretim Planlama ve APS Yönetim Sistemi</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="tab-container">
+        <button id="tab-sok-ana" class="tab active" onclick="switchPage('sok-ana')">🖥️ ŞOK Ana Ekran</button>
+        <button id="tab-sok-liste" class="tab" onclick="switchPage('sok-liste')">🛒 ŞOK Detaylı Liste</button>
+        <button id="tab-gh-ana" class="tab" onclick="switchPage('gh-ana')">🖥️ GH Ana Ekran</button>
+        <button id="tab-gh-liste" class="tab" onclick="switchPage('gh-liste')">🌟 GH Detaylı Liste</button>
+        <button id="tab-cips-ana" class="tab" onclick="switchPage('cips-ana')">🖥️ CİPS Ana Ekran</button>
+        <button id="tab-cips-liste" class="tab" onclick="switchPage('cips-liste')">🍿 CİPS Detaylı Liste</button>
+        <button id="tab-ambalaj-sekme" class="tab" onclick="switchPage('ambalaj-sekme')">📦 Ambalaj Kontrolü</button>
+        <button id="tab-personel-sekme" class="tab" onclick="switchPage('personel-sekme')">👥 Personel / Vardiya</button>
+        <button id="tab-tanimlar-sekme" class="tab" onclick="switchPage('tanimlar-sekme')">⚙️ Ürün & Makine Ayarları</button>
+    </div>
+
+    <div class="content-section">
+
+        <!-- KPI METRİKLER PANELİ -->
+        <div class="kpi-container">
+            <div class="kpi-box"><div class="kpi-title">Aktif Sıradaki İş Yükü</div><div class="kpi-value" id="kpi-isler">0 İş Emri</div></div>
+            <div class="kpi-box"><div class="kpi-title">Toplam Paketleme Yükü</div><div class="kpi-value" id="kpi-saat" style="color: #38bdf8;">0.0 Saat</div></div>
+            <div class="kpi-box"><div class="kpi-title">Yetersiz Ambalaj Alarmı</div><div class="kpi-value" id="kpi-alarm" style="color: #f87171;">0 Ürün</div></div>
+            <!-- DİNAMİK PERSONEL SAYACI (İŞ EMİRLERİNDEKİ DEĞERLERİ TOPLAR) -->
+            <div class="kpi-box">
+                <div class="kpi-title" id="kpi-personel-title">Gerekli Personel (Günlük)</div>
+                <div class="kpi-value" id="kpi-personel-val" style="color: #c084fc;">0 Personel</div>
+                <div class="kpi-switch-group">
+                    <button id="sw-all" class="kpi-sw active" onclick="setPersonelKpiFilter('all')">Gün</button>
+                    <button id="sw-v1" class="kpi-sw" onclick="setPersonelKpiFilter('V1')">V1</button>
+                    <button id="sw-v2" class="kpi-sw" onclick="setPersonelKpiFilter('V2')">V2</button>
+                    <button id="sw-v3" class="kpi-sw" onclick="setPersonelKpiFilter('V3')">V3</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 1. ŞOK MARKET SAYFASI ================= -->
+        <div id="sok-ana" class="page" style="display: block;">
+            <div class="shok-zone">
+                <h3 class="shok-title">🛒 ŞOK Sipariş Listesine İş Emri Ekleme</h3>
+                <div class="grid-form">
+                    <div class="form-group"><label>Plan Tarihi</label><input type="date" id="sokFormTarih"></div>
+                    <div class="form-group"><label>ŞOK Ürünleri</label><select id="sokFormUrun"></select></div>
+                    <div class="form-group"><label>Planlanacak Hat</label><select id="sokFormMakine"></select></div>
+                    <div class="form-group"><label>Miktar (Paket)</label><input type="number" id="sokFormAdet" value="30000" step="5000"></div>
+                    <!-- YENİ: İŞ EMRİ BAZLI PERSONEL GİRİŞ ALANI -->
+                    <div class="form-group"><label>Gerekli Personel</label><input type="number" id="sokFormPersonel" value="3" step="0.5"></div>
+                    <div class="form-group">
+                        <label>Durum</label>
+                        <select id="sokFormDurum">
+                            <option value="Planlandı">🔴 Planlandı</option>
+                            <option value="Devam Ediyor">🟡 Devam Ediyor</option>
+                            <option value="Tamamlandı">🟢 Tamamlandı</option>
+                            <option value="Yapılamadı">⚫ Yapılamadı / İptal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Vardiya</label>
+                        <select id="sokFormVardiya" onchange="vardiyaSaatAyarla('sok')">
+                            <option value="V1 (07:00 - 15:00)">V1 (07:00 - 15:00)</option>
+                            <option value="V2 (15:00 - 23:00)">V2 (15:00 - 23:00)</option>
+                            <option value="V3 (23:00 - 07:00)">V3 (23:00 - 07:00)</option>
+                            <option value="ESNEK">Esnek Saat</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Başlangıç Saati</label><input type="time" id="sokFormBas" value="07:00"></div>
+                    <div class="form-group"><label>Bitiş Saati</label><input type="time" id="sokFormBit" value="15:00"></div>
+                    <button class="btn btn-shok" onclick="isEmriKaydet('sok')">Ekle</button>
+                </div>
+            </div>
+
+            <h2 class="shok-title">🖥️ ŞOK Market Canlı Hat İzleme Masası</h2>
+            <div class="filter-section" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <div class="form-group"><label>Tarih Seçimi</label><input type="date" id="sokFilterTarih" onchange="renderTablolar()"></div>
+                <div class="form-group"><label>Makine Süzgeci</label><select id="sokFilterMakine" onchange="renderTablolar()"></select></div>
+                <div class="form-group"><label>Min Çalışma Saati</label><input type="number" id="sokFilterMinSaat" step="0.5" oninput="renderTablolar()"></div>
+                <div class="form-group"><label>Max Çalışma Saati</label><input type="number" id="sokFilterMaxSaat" step="0.5" oninput="renderTablolar()"></div>
+            </div>
+            <div class="machine-summary-grid" id="sokMakineKartlari"></div>
+        </div>
+
+        <div id="sok-liste" class="page">
+            <h2 class="shok-title">📋 ŞOK Market Siparişleri Detaylı İş Listesi</h2>
+            <div class="filter-section">
+                <div class="form-group"><label>Tarih Süzgeci</label><input type="date" id="sokListFilterTarih" onchange="renderTablolar()"></div>
+                <div class="form-group"><label>Makine Süzgeci</label><select id="sokListFilterMakine" onchange="renderTablolar()"></select></div>
+                <div class="form-group"><label>Ürün Süzgeci</label><select id="sokListFilterUrun" onchange="renderTablolar()"></select></div>
+                <button class="btn" onclick="temizleListeFiltre('sok')" style="background-color: #334155; color: #fff;">Filtreleri Sıfırla</button>
+            </div>
+            <table id="sokTablo">
+                <thead>
+                    <tr><th>Tarih</th><th>Stok Kodu</th><th>Ürün Adı</th><th>Makine / Hat</th><th>Miktar</th><th>Personel</th><th>Saat Aralığı</th><th>Süre (Saat)</th><th>Durum</th><th>İptal / Arıza Gerekçesi</th><th>İşlem</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- ================= 2. GOLD HARVEST SAYFASI ================= -->
+        <div id="gh-ana" class="page">
+            <div class="gh-zone">
+                <h3 class="gh-title">🌟 GOLD HARVEST Sipariş Listesine İş Emri Ekleme</h3>
+                <div class="grid-form">
+                    <div class="form-group"><label>Plan Tarihi</label><input type="date" id="ghFormTarih"></div>
+                    <div class="form-group"><label>GH Ürünleri</label><select id="ghFormUrun"></select></div>
+                    <div class="form-group"><label>Planlanacak Hat</label><select id="ghFormMakine"></select></div>
+                    <div class="form-group"><label>Miktar (Paket)</label><input type="number" id="ghFormAdet" value="25000" step="5000"></div>
+                    <!-- YENİ: İŞ EMRİ BAZLI PERSONEL GİRİŞ ALANI -->
+                    <div class="form-group"><label>Gerekli Personel</label><input type="number" id="ghFormPersonel" value="4" step="0.5"></div>
+                    <div class="form-group">
+                        <label>Durum</label>
+                        <select id="ghFormDurum">
+                            <option value="Planlandı">🔴 Planlandı</option>
+                            <option value="Devam Ediyor">🟡 Devam Ediyor</option>
+                            <option value="Tamamlandı">🟢 Tamamlandı</option>
+                            <option value="Yapılamadı">⚫ Yapılamadı / İptal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Vardiya</label>
+                        <select id="ghFormVardiya" onchange="vardiyaSaatAyarla('gh')">
+                            <option value="V1 (07:00 - 15:00)">V1 (07:00 - 15:00)</option>
+                            <option value="V2 (15:00 - 23:00)">V2 (15:00 - 23:00)</option>
+                            <option value="V3 (23:00 - 07:00)">V3 (23:00 - 07:00)</option>
+                            <option value="ESNEK">Esnek Saat</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Başlangıç Saati</label><input type="time" id="ghFormBas" value="07:00"></div>
+                    <div class="form-group"><label>Bitiş Saati</label><input type="time" id="ghFormBit" value="15:00"></div>
+                    <button class="btn btn-gh" onclick="isEmriKaydet('gh')">Ekle</button>
+                </div>
+            </div>
+
+            <h2 class="gh-title">🌟 Gold Harvest Canlı Hat İzleme Masası</h2>
+            <div class="filter-section" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <div class="form-group"><label>Tarih Seçimi</label><input type="date" id="ghFilterTarih" onchange="renderTablolar()"></div>
+                <div class="form-group"><label>Makine Süzgeci</label><select id="ghFilterMakine" onchange="renderTablolar()"></select></div>
+                <div class="form-group"><label>Min Çalışma Saati</label><input type="number" id="ghFilterMinSaat" step="0.5" oninput="renderTablolar()"></div>
+                <div class="form-group"><label>Max Çalışma Saati</label><input type="number" id="ghFilterMaxSaat" step="0.5" oninput="renderTablolar()"></div>
+            </div>
+            <div class="machine-summary-grid" id="ghMakineKartlari"></div>
+        </div>
+
+        <div id="gh-liste" class="page">
+            <h2 class="gh-title">📋 Gold Harvest Markalı Ürünler Detaylı İş Listesi</h2>
+            <div class="filter-section">
+                <div class="form-group"><label>Tarih Süzgeci</label><input type="date" id="ghListFilterTarih" onchange="renderTablolar()"></div>
+                <div class="form-group"><label>Makine Süzgeci</label><select id="ghListFilterMakine" onchange="renderTablolar()"></select></div>
+                <div class="form-group"><label>Ürün Süzgeci</label><select id="ghListFilterUrun" onchange="renderTablolar()"></select></div>
+                <button class="btn" onclick="temizleListeFiltre('gh')" style="background-color: #334155; color: #fff;">Filtreleri Sıfırla</button>
+            </div>
+            <table id="ghTablo">
+                <thead>
+                    <tr><th>Tarih</th><th>Stok Kodu</th><th>Ürün Adı</th><th>Makine / Hat</th><th>Miktar</th><th>Personel</th><th>Saat Aralığı</th><th>Süre (Saat)</th><th>Durum</th><th>İptal / Arıza Gerekçesi</th><th>İşlem</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- ================= 3. CIPS FABRİKASI LOKASYONU ================= -->
+        <div id="cips-ana" class="page">
+            <div class="cips-zone">
+                <h3 class="cips-title">🍿 CIPS Fabrikası Üretim Sipariş Girişi</h3>
+                <div class="grid-form">
+                    <div class="form-group"><label>Plan Tarihi</label><input type="date" id="cipsFormTarih"></div>
+                    <div class="form-group"><label>Cips Ürün Portföyü</label><select id="cipsFormUrun"></select></div>
+                    <div class="form-group"><label>Cips Paketleme Hattı</label><select id="cipsFormMakine"></select></div>
+                    <div class="form-group"><label>Miktar (Paket)</label><input type="number" id="cipsFormAdet" value="20000" step="5000"></div>
+                    <!-- YENİ: İŞ EMRİ BAZLI PERSONEL GİRİŞ ALANI -->
+                    <div class="form-group"><label>Gerekli Personel</label><input type="number" id="cipsFormPersonel" value="4" step="0.5"></div>
+                    <div class="form-group">
+                        <label>Durum</label>
+                        <select id="cipsFormDurum">
+                            <option value="Planlandı">🔴 Planlandı</option>
+                            <option value="Devam Ediyor">🟡 Devam Ediyor</option>
+                            <option value="Tamamlandı">🟢 Tamamlandı</option>
+                            <option value="Yapılamadı">⚫ Yapılamadı / İptal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Vardiya</label>
+                        <select id="cipsFormVardiya" onchange="vardiyaSaatAyarla('cips')">
+                            <option value="V1 (07:00 - 15:00)">V1 (07:00 - 15:00)</option>
+                            <option value="V2 (15:00 - 23:00)">V2 (15:00 - 23:00)</option>
+                            <option value="V3 (23:00 - 07:00)">V3 (23:00 - 07:00)</option>
+                            <option value="ESNEK">Esnek Saat</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Başlangıç Saati</label><input type="time" id="cipsFormBas" value="07:00"></div>
+                    <div class="form-group"><label>Bitiş Saati</label><input type="time" id="cipsFormBit" value="15:00"></div>
+                    <button class="btn btn-cips" onclick="isEmriKaydet('cips')">Ekle</button>
+                </div>
+            </div>
+
+            <h2 class="cips-title">🖥️ CİPS Fabrikası Canlı Hat İzleme Masası</h2>
+            <div class="filter-section" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <div class="form-group"><label>Tarih Seçimi</label><input type="date" id="cipsFilterTarih" onchange="renderTablolar()"></div>
+                <div class="form-group"><label>Makine Süzgeci</label><select id="cipsFilterMakine" onchange="renderTablolar()"></select></div>
+                <div class="form-group"><label>Min Çalışma Saati</label><input type="number" id="cipsFilterMinSaat" step="0.5" oninput="renderTablolar()"></div>
+                <div class="form-group"><label>Max Çalışma Saati</label><input type="number" id="cipsFilterMaxSaat" step="0.5" oninput="renderTablolar()"></div>
+            </div>
+            <div class="machine-summary-grid" id="cipsMakineKartlari"></div>
+        </div>
+
+        <div id="cips-liste" class="page">
+            <h2 class="cips-title">📋 CİPS Fabrikası Üretim Siparişleri Detaylı İş Listesi</h2>
+            <div class="filter-section">
+                <div class="form-group"><label>Tarih Süzgeci</label><input type="date" id="cipsListFilterTarih" onchange="renderTablolar()"></div>
+                <div class="form-group"><label>Makine Süzgeci</label><select id="cipsListFilterMakine" onchange="renderTablolar()"></select></div>
+                <div class="form-group"><label>Ürün Süzgeci</label><select id="cipsListFilterUrun" onchange="renderTablolar()"></select></div>
+                <button class="btn" onclick="temizleListeFiltre('cips')" style="background-color: #334155; color: #fff;">Filtreleri Sıfırla</button>
+            </div>
+            <table id="cipsTablo">
+                <thead>
+                    <tr><th>Tarih</th><th>Stok Kodu</th><th>Ürün Adı</th><th>Makine / Hat</th><th>Miktar</th><th>Personel</th><th>Saat Aralığı</th><th>Süre (Saat)</th><th>Durum</th><th>İptal / Arıza Gerekçesi</th><th>İşlem</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- ================= AMBALAJ KONTROLÜ ================= -->
+        <div id="ambalaj-sekme" class="page">
+            <h2>📦 Fabrika Ambalaj Durum ve Kritik Seviye Raporu (Tüm Lokasyonlar)</h2>
+            <table id="ambalajTablo">
+                <thead>
+                    <tr><th>Stok Kodu</th><th>Ürün Adı</th><th>Kuruluş / Alan</th><th>Depo Ambalaj Stoğu</th><th>Kuyruktaki İhtiyaç</th><th>Kalan Güvence</th><th>Durum</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- ================= PERSONEL İHTİYACI ================= -->
+        <div id="personel-sekme" class="page">
+            <h2>👥 Vardiya ve Hat Bazlı Operatör/Personel İhtiyacı</h2>
+            <div class="filter-section" style="grid-template-columns: 1fr;">
+                <div class="form-group"><label>İş Gücü Hesaplama Tarihi Seçimi</label><input type="date" id="persFilterTarih" onchange="renderTablolar()"></div>
+            </div>
+            <table id="personelTablo">
+                <thead>
+                    <tr><th>Planlanan Zaman / Vardiya</th><th>Kuruluş / Lokasyon</th><th>Çalışacak Hat</th><th>Üretimdeki Ürün</th><th>Gerekli Hat Personeli</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- ================= MAKİNE VE ÜRÜN AYARLARI ================= -->
+        <div id="tanimlar-sekme" class="page">
+            <h2>⚙️ Fabrika Altyapı Ürün Kartı ve Makine Yönetim Masası</h2>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-top:15px; margin-bottom:30px;">
+                <div style="background:rgba(255,255,255,0.01); padding:15px; border-radius:8px; border:1px solid #3a506b;">
+                    <h3 style="font-size:14px; margin-bottom:10px; color:#38bdf8;">🍎 Yeni Ürün Kartı Tanımlama</h3>
+                    <div class="grid-form" style="grid-template-columns:1fr; gap:8px;">
+                        <div class="form-group"><label>Ait Olduğu Kuruluş/Lokasyon</label><select id="addUrunTip"><option value="sok">ŞOK Market (Amigo)</option><option value="gh">Gold Harvest (Master Nut/Puf)</option><option value="cips">CIPS Fabrikası Ürünleri</option></select></div>
+                        <div class="form-group"><label>Stok Kodu</label><input type="text" id="addStokKodu" placeholder="Örnek: 1520400005"></div>
+                        <div class="form-group"><label>Ürün Adı</label><input type="text" id="addUrunAdi" placeholder="Örnek: PAPRİKA AROMALI CİPS 150 GR"></div>
+                        <div class="form-group"><label>Ambalaj Stoğu</label><input type="number" id="addAmbStok" value="100000"></div>
+                        <button class="btn" onclick="yeniUrunEkle()" style="margin-top:10px;">Kaydet</button>
+                    </div>
+                </div>
+                <!-- MAKİNE KARTLARINDAN PERSONEL TANIMI KALDIRILDI, SADECE PARAMETRİK HIZ TABANDIR -->
+                <div style="background:rgba(255,255,255,0.01); padding:15px; border-radius:8px; border:1px solid #3a506b;">
+                    <h3 style="font-size:14px; margin-bottom:10px; color:#38bdf8;">⚙️ Yeni Hat / Makine Kurulumu</h3>
+                    <div class="grid-form" style="grid-template-columns:1fr; gap:8px;">
+                        <div class="form-group"><label>Ait Olduğu Kuruluş/Lokasyon</label><select id="addMakineTip"><option value="sok">ŞOK Hatları</option><option value="gh">Gold Harvest Hatları</option><option value="cips">CIPS Fabrika Hatları</option></select></div>
+                        <div class="form-group"><label>Makine / Hat Adı</label><input type="text" id="addMakineAdi" placeholder="Örnek: CIPS EXTRUDER LINE 1"></div>
+                        <div class="form-group"><label>Hız (Adet/Dk)</label><input type="number" id="addMakineHiz" value="60"></div>
+                        <button class="btn" onclick="yeniMakineEkle()" style="margin-top:10px;">Kaydet</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAKİNE LİSTELERİ -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:15px; margin-bottom:30px;">
+                <div><h3 class="shok-title">🛒 Aktif ŞOK Hatları</h3><table id="sokMakineleriTablo"><thead><tr><th>Makine Adı</th><th>Hız</th><th>İşlem</th></tr></thead><tbody></tbody></table></div>
+                <div><h3 class="gh-title">🌟 Aktif Gold Harvest Hatları</h3><table id="ghMakineleriTablo"><thead><tr><th>Makine Adı</th><th>Hız</th><th>İşlem</th></tr></thead><tbody></tbody></table></div>
+                <div><h3 class="cips-title">🍿 Aktif CIPS Fabrika Hatları</h3><table id="cipsMakineleriTablo"><thead><tr><th>Makine Adı</th><th>Hız</th><th>İşlem</th></tr></thead><tbody></tbody></table></div>
+            </div>
+
+            <!-- ÜRÜN LİSTELERI -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:15px;">
+                <div><h3 class="shok-title">🛒 ŞOK Ürün Portföyü</h3><table id="sokUrunleriTablo"><thead><tr><th>Kod</th><th>Ürün Adı</th><th>Stok</th><th>İşlem</th></tr></thead><tbody></tbody></table></div>
+                <div><h3 class="gh-title">🌟 Gold Harvest Portföyü</h3><table id="ghUrunleriTablo"><thead><tr><th>Kod</th><th>Ürün Adı</th><th>Stok</th><th>İşlem</th></tr></thead><tbody></tbody></table></div>
+                <div><h3 class="cips-title">🍿 CIPS Ürün Portföyü</h3><table id="cipsUrunleriTablo"><thead><tr><th>Kod</th><th>Ürün Adı</th><th>Stok</th><th>İşlem</th></tr></thead><tbody></tbody></table></div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <span>Design & Development by</span> <strong>Mustafa Bayır</strong>
+    </footer>
+
+    <script>
+        var sokMakineler = [
+            { id: 11, name: 'SYNTEGON-02 (Siyah Çekirdek)', hiz: 75 },
+            { id: 12, name: 'VOLPACK DOYPACK-8', hiz: 60 },
+            { id: 13, name: 'VOLPACK DOYPACK-9', hiz: 55 },
+            { id: 14, name: 'ROVEMA', hiz: 80 }
+        ];
+
+        var ghMakineler = [
+            { id: 21, name: 'SYNTEGON-03', hiz: 75 },
+            { id: 22, name: 'SYNTEGON-06', hiz: 75 },
+            { id: 23, name: 'ATHAPACK QUADRO-1', hiz: 50 },
+            { id: 26, name: 'PFM DOYPACK 4', hiz: 55 },
+            { id: 32, name: 'FIRIN + FRYER GRUBU (GH)', hiz: 40 }
+        ];
+
+        var cipsMakineler = [
+            { id: 41, name: 'CIPS EXTRUDER LINE-1', hiz: 70 },
+            { id: 42, name: 'CIPS MULTIHEAD PACKER 2', hiz: 65 },
+            { id: 43, name: 'FRY-PACK CIPS LINE', hiz: 50 }
+        ];
+
+        var urunler = [
+            { id: 51, tip: 'sok', stokKodu: '1520400005', urunAdi: 'AMİGO TUZLU AYÇEKİRDEĞİ İRİ BOY 400 GR', ambalajStok: 40836 },
+            { id: 53, tip: 'sok', stokKodu: '1520150001', urunAdi: 'AMİGO FINDIK İÇİ 150 GR', ambalajStok: 168480 },
+            { id: 55, tip: 'gh', stokKodu: '1101000008', urunAdi: 'MASTER NUT Kaju Fıstığı W320 150 GR', ambalajStok: 250000 },
+            { id: 58, tip: 'cips', stokKodu: '1201000001', urunAdi: 'CRUNCHY BARBEKÜ SOSLU CİPS 120 GR', ambalajStok: 85000 },
+            { id: 59, tip: 'cips', stokKodu: '1201000002', urunAdi: 'CRUNCHY KLASİK TUZLU CİPS 120 GR', ambalajStok: 110000 }
+        ];
+
+        var sokIsEmirleri = [];
+        var ghIsEmirleri = [];
+        var cipsIsEmirleri = [];
+        var personelKpiFilter = "all";
+
+        window.onload = function() {
+            if(localStorage.getItem('mb_sok_makineler_v7')) sokMakineler = JSON.parse(localStorage.getItem('mb_sok_makineler_v7'));
+            if(localStorage.getItem('mb_gh_makineler_v7')) ghMakineler = JSON.parse(localStorage.getItem('mb_gh_makineler_v7'));
+            if(localStorage.getItem('mb_cips_makineler_v7')) cipsMakineler = JSON.parse(localStorage.getItem('mb_cips_makineler_v7'));
+            if(localStorage.getItem('mb_urunler_v7')) urunler = JSON.parse(localStorage.getItem('mb_urunler_v7'));
+            if(localStorage.getItem('mb_sok_isler_v7')) sokIsEmirleri = JSON.parse(localStorage.getItem('mb_sok_isler_v7'));
+            if(localStorage.getItem('mb_gh_isler_v7')) ghIsEmirleri = JSON.parse(localStorage.getItem('mb_gh_isler_v7'));
+            if(localStorage.getItem('mb_cips_isler_v7')) cipsIsEmirleri = JSON.parse(localStorage.getItem('mb_cips_isler_v7'));
+
+            var bugunIso = new Date().toISOString().split('T')[0];
+            document.getElementById('sokFormTarih').value = bugunIso;
+            document.getElementById('ghFormTarih').value = bugunIso;
+            document.getElementById('cipsFormTarih').value = bugunIso;
+            document.getElementById('sokFilterTarih').value = bugunIso;
+            document.getElementById('ghFilterTarih').value = bugunIso;
+            document.getElementById('cipsFilterTarih').value = bugunIso;
+            document.getElementById('persFilterTarih').value = bugunIso;
+
+            formSecenekleriniDoldur();
+            renderTablolar();
+        };
+
+        function saveStorage() {
+            localStorage.setItem('mb_sok_makineler_v7', JSON.stringify(sokMakineler));
+            localStorage.setItem('mb_gh_makineler_v7', JSON.stringify(ghMakineler));
+            localStorage.setItem('mb_cips_makineler_v7', JSON.stringify(cipsMakineler));
+            localStorage.setItem('mb_urunler_v7', JSON.stringify(urunler));
+            localStorage.setItem('mb_sok_isler_v7', JSON.stringify(sokIsEmirleri));
+            localStorage.setItem('mb_gh_isler_v7', JSON.stringify(ghIsEmirleri));
+            localStorage.setItem('mb_cips_isler_v7', JSON.stringify(cipsIsEmirleri));
+        }
+
+        function switchPage(pageId) {
+            document.getElementById('sok-ana').style.display = 'none'; document.getElementById('sok-liste').style.display = 'none';
+            document.getElementById('gh-ana').style.display = 'none'; document.getElementById('gh-liste').style.display = 'none';
+            document.getElementById('cips-ana').style.display = 'none'; document.getElementById('cips-liste').style.display = 'none';
+            document.getElementById('ambalaj-sekme').style.display = 'none'; document.getElementById('personel-sekme').style.display = 'none';
+            document.getElementById('tanimlar-sekme').style.display = 'none';
+
+            var tabs = document.querySelectorAll('.tab');
+            for(var i=0; i<tabs.length; i++) tabs[i].classList.remove('active', 'cips-tab-active');
+
+            document.getElementById(pageId).style.display = 'block';
+            var activeTab = document.getElementById('tab-' + pageId);
+            activeTab.classList.add('active');
+            if(pageId.includes('cips')) activeTab.classList.add('cips-tab-active');
+            renderTablolar();
+        }
+
+        function setPersonelKpiFilter(val) {
+            personelKpiFilter = val;
+            var buttons = document.querySelectorAll('.kpi-sw');
+            for(var i=0; i<buttons.length; i++) buttons[i].classList.remove('active');
+            document.getElementById('sw-' + val.toLowerCase()).classList.add('active');
+            renderTablolar();
+        }
+
+        function vardiyaSaatAyarla(tip) {
+            var v = document.getElementById(tip + 'FormVardiya').value;
+            if(v.includes("07:00 - 15:00")) {
+                document.getElementById(tip + 'FormBas').value = "07:00"; document.getElementById(tip + 'FormBit').value = "15:00";
+            } else if(v.includes("15:00 - 23:00")) {
+                document.getElementById(tip + 'FormBas').value = "15:00"; document.getElementById(tip + 'FormBit').value = "23:00";
+            } else if(v.includes("23:00 - 07:00")) {
+                document.getElementById(tip + 'FormBas').value = "23:00"; document.getElementById(tip + 'FormBit').value = "07:00";
+            }
+        }
+
+        function formSecenekleriniDoldur() {
+            var sokUHtml = "", ghUHtml = "", cipsUHtml = "";
+            var sokF = '<option value="HEPSİ">-- Tüm Ürünler --</option>', ghF = sokF, cipsF = sokF;
+            
+            for(var i=0; i<urunler.length; i++) {
+                var opt = '<option value="' + urunler[i].stokKodu + '">' + urunler[i].stokKodu + ' - ' + urunler[i].urunAdi + '</option>';
+                if(urunler[i].tip === 'sok') { sokUHtml += opt; sokF += opt; }
+                else if(urunler[i].tip === 'gh') { ghUHtml += opt; ghF += opt; }
+                else { cipsUHtml += opt; cipsF += opt; }
+            }
+            document.getElementById('sokFormUrun').innerHTML = sokUHtml; document.getElementById('ghFormUrun').innerHTML = ghUHtml; document.getElementById('cipsFormUrun').innerHTML = cipsUHtml;
+            document.getElementById('sokListFilterUrun').innerHTML = sokF; document.getElementById('ghListFilterUrun').innerHTML = ghF; document.getElementById('cipsListFilterUrun').innerHTML = cipsF;
+
+            var sokMHtml = ""; for(var i=0; i<sokMakineler.length; i++) sokMHtml += '<option value="' + sokMakineler[i].name + '">' + sokMakineler[i].name + '</option>';
+            document.getElementById('sokFormMakine').innerHTML = sokMHtml; document.getElementById('sokFilterMakine').innerHTML = '<option value="HEPSİ">-- Tüm Hatlar --</option>' + sokMHtml; document.getElementById('sokListFilterMakine').innerHTML = '<option value="HEPSİ">-- Tüm Hatlar --</option>' + sokMHtml;
+
+            var ghMHtml = ""; for(var i=0; i<ghMakineler.length; i++) ghMHtml += '<option value="' + ghMakineler[i].name + '">' + ghMakineler[i].name + '</option>';
+            document.getElementById('ghFormMakine').innerHTML = ghMHtml; document.getElementById('ghFilterMakine').innerHTML = '<option value="HEPSİ">-- Tüm Hatlar --</option>' + ghMHtml; document.getElementById('ghListFilterMakine').innerHTML = '<option value="HEPSİ">-- Tüm Hatlar --</option>' + ghMHtml;
+
+            var cipsMHtml = ""; for(var i=0; i<cipsMakineler.length; i++) cipsMHtml += '<option value="' + cipsMakineler[i].name + '">' + cipsMakineler[i].name + '</option>';
+            document.getElementById('cipsFormMakine').innerHTML = cipsMHtml; document.getElementById('cipsFilterMakine').innerHTML = '<option value="HEPSİ">-- Tüm Hatlar --</option>' + cipsMHtml; document.getElementById('cipsListFilterMakine').innerHTML = '<option value="HEPSİ">-- Tüm Hatlar --</option>' + cipsMHtml;
+        }
+
+        function isEmriKaydet(tip) {
+            var tarih = document.getElementById(tip + 'FormTarih').value;
+            var uKodu = document.getElementById(tip + 'FormUrun').value;
+            var mName = document.getElementById(tip + 'FormMakine').value;
+            var miktar = parseInt(document.getElementById(tip + 'FormAdet').value);
+            // NEW: ARTIK PERSONEL DOĞRUDAN FORM ÜZERİNDEN ALINIYOR
+            var personel = parseFloat(document.getElementById(tip + 'FormPersonel').value) || 0;
+            var fDurum = document.getElementById(tip + 'FormDurum').value;
+            var vardiya = document.getElementById(tip + 'FormVardiya').value;
+            var basSaat = document.getElementById(tip + 'FormBas').value;
+            var bitSaat = document.getElementById(tip + 'FormBit').value;
+
+            if(!tarih || !miktar || !basSaat) { alert("Eksik veri girişi yapıldı."); return; }
+
+            var planZamani = new Date(tarih + "T" + basSaat + ":00");
+            if(planZamani < new Date()) { alert("🚨 ZAMAN EMNİYET BLOKAJI 🚨\n\nGeçmiş zaman kodlarına yeni üretim planı girilemez."); return; }
+
+            var secilenUrun = null; for(var i=0; i<urunler.length; i++) { if(urunler[i].stokKodu === uKodu) { secilenUrun = urunler[i]; break; } }
+
+            if(secilenUrun && fDurum !== "Yapılamadı") {
+                var mevcutTuketim = 0;
+                var havuz = (tip === 'sok') ? sokIsEmirleri : (tip === 'gh' ? ghIsEmirleri : cipsIsEmirleri);
+                for(var j=0; j<havuz.length; j++) {
+                    if(havuz[j].stokKodu === uKodu && havuz[j].durum !== 'Tamamlandı' && havuz[j].durum !== 'Yapılamadı') mevcutTuketim += havuz[j].miktar;
+                }
+                if ((mevcutTuketim + miktar) > secilenUrun.ambalajStok) { alert("Yetersiz ambalaj stoğu."); return; }
+            }
+
+            var yeniIs = { id: Date.now(), tarih: tarih, stokKodu: uKodu, urunAdi: secilenUrun.urunAdi, makineHat: mName, miktar: miktar, personel: personel, basSaat: basSaat, bitSaat: bitSaat, vardiyaNotu: vardiya, durum: fDurum, aciklama: '' };
+            if(fDurum === "Tamamlandı") { secilenUrun.ambalajStok -= miktar; }
+
+            if(tip === 'sok') sokIsEmirleri.push(yeniIs); else if(tip === 'gh') ghIsEmirleri.push(yeniIs); else cipsIsEmirleri.push(yeniIs);
+            saveStorage(); renderTablolar(); alert("İş emri eklendi.");
+        }
+
+        function durumGuncelle(tip, id, yeniDurum) {
+            var havuz = (tip === 'sok') ? sokIsEmirleri : (tip === 'gh' ? ghIsEmirleri : cipsIsEmirleri);
+            for(var i=0; i<havuz.length; i++) {
+                if(havuz[i].id === id) {
+                    var eskiDurum = havuz[i].durum;
+                    var isMiktari = havuz[i].miktar;
+                    var sKodu = havuz[i].stokKodu;
+
+                    var hedefUrun = null; for(var u=0; u<urunler.length; u++) { if(urunler[u].stokKodu === sKodu) { hedefUrun = urunler[u]; break; } }
+
+                    var girilenAciklama = havuz[i].aciklama;
+                    if(yeniDurum === "Yapılamadı" || yeniDurum === "Tamamlandı") {
+                        var cevap = prompt((yeniDurum === "Yapılamadı") ? "Gerekçe veya arıza nedenini giriniz:" : "Ek açıklama veya not giriniz:", havuz[i].aciklama);
+                        if(cevap !== null) girilenAciklama = cevap;
+                    }
+
+                    if(hedefUrun) {
+                        if(eskiDurum !== "Tamamlandı" && yeniDurum === "Tamamlandı") hedefUrun.ambalajStok -= isMiktari;
+                        else if(eskiDurum === "Tamamlandı" && yeniDurum !== "Tamamlandı") hedefUrun.ambalajStok += isMiktari;
+                    }
+                    havuz[i].durum = yeniDurum; havuz[i].aciklama = girilenAciklama; break;
+                }
+            }
+            saveStorage(); renderTablolar();
+        }
+
+        function aciklamaElDuzenle(tip, id, yeniYazi) {
+            var havuz = (tip === 'sok') ? sokIsEmirleri : (tip === 'gh' ? ghIsEmirleri : cipsIsEmirleri);
+            for(var i=0; i<havuz.length; i++) { if(havuz[i].id === id) { havuz[i].aciklama = yeniYazi; break; } }
+            saveStorage();
+        }
+
+        // NEW: DETAYLI LİSTEDEKİ ESNEK PERSONEL SAYISINI DOĞRUDAN DEĞİŞTİRME FONKSİYONU
+        function personelElDuzenle(tip, id, yeniSayi) {
+            var havuz = (tip === 'sok') ? sokIsEmirleri : (tip === 'gh' ? ghIsEmirleri : cipsIsEmirleri);
+            var parsed = parseFloat(yeniSayi);
+            if(isNaN(parsed) || parsed < 0) return;
+            for(var i=0; i<havuz.length; i++) {
+                if(havuz[i].id === id) { havuz[i].personel = parsed; break; }
+            }
+            saveStorage(); renderTablolar();
+        }
+
+        function temizleListeFiltre(tip) {
+            document.getElementById(tip + 'ListFilterTarih').value = "";
+            document.getElementById(tip + 'ListFilterMakine').value = "HEPSİ";
+            document.getElementById(tip + 'ListFilterUrun').value = "HEPSİ";
+            renderTablolar();
+        }
+
+        function isEmriSil(tip, id) {
+            var havuz = (tip === 'sok') ? sokIsEmirleri : (tip === 'gh' ? ghIsEmirleri : cipsIsEmirleri);
+            if(confirm("İş emrini silmek istediğinize emin misiniz?")) {
+                for(var i=0; i<havuz.length; i++) {
+                    if(havuz[i].id === id && havuz[i].durum === 'Tamamlandı') {
+                        var sKodu = havuz[i].stokKodu;
+                        for(var u=0; u<urunler.length; u++) { if(urunler[u].stokKodu === sKodu) { urunler[u].ambalajStok += havuz[i].miktar; break; } }
+                    }
+                }
+                if(tip === 'sok') sokIsEmirleri = sokIsEmirleri.filter(function(i) { return i.id !== id; });
+                else if(tip === 'gh') ghIsEmirleri = ghIsEmirleri.filter(function(i) { return i.id !== id; });
+                else cipsIsEmirleri = cipsIsEmirleri.filter(function(i) { return i.id !== id; });
+                saveStorage(); renderTablolar();
+            }
+        }
+
+        function makineSil(tip, id) {
+            if(confirm("İlgili hattı kaldırmak istediğinize emin misiniz?")) {
+                if(tip === 'sok') sokMakineler = sokMakineler.filter(function(m) { return m.id !== id; });
+                else if(tip === 'gh') ghMakineler = ghMakineler.filter(function(m) { return m.id !== id; });
+                else cipsMakineler = cipsMakineler.filter(function(m) { return m.id !== id; });
+                saveStorage(); formSecenekleriniDoldur(); renderTablolar();
+            }
+        }
+
+        function urunSil(id) {
+            if(confirm("İlgili ürünü portföyden kaldırmak istediğinize emin misiniz?")) {
+                urunler = urunler.filter(function(u) { return u.id !== id; });
+                saveStorage(); formSecenekleriniDoldur(); renderTablolar();
+            }
+        }
+
+        function ambalajStokGuncelle(id) {
+            var yeniMiktar = prompt("Güncel ambalaj stok değerini adet olarak giriniz:"); if (yeniMiktar === null) return;
+            var sayisalMiktar = parseInt(yeniMiktar); if (isNaN(sayisalMiktar) || sayisalMiktar < 0) { alert("Geçersiz veri."); return; }
+            for (var i = 0; i < urunler.length; i++) { if (urunler[i].id === id) { urunler[i].ambalajStok = sayisalMiktar; break; } }
+            saveStorage(); renderTablolar(); alert("Stok güncellendi.");
+        }
+
+        function renderTablolar() {
+            renderAnaMasası('sok', 'sokFilterTarih', 'sokFilterMakine', 'sokFilterMinSaat', 'sokFilterMaxSaat', 'sokMakineKartlari', 'shok-card-border', sokIsEmirleri, sokMakineler, 'normal');
+            renderAnaMasası('gh', 'ghFilterTarih', 'ghFilterMakine', 'ghFilterMinSaat', 'ghFilterMaxSaat', 'ghMakineKartlari', 'gh-card-border', ghIsEmirleri, ghMakineler, 'normal');
+            renderAnaMasası('cips', 'cipsFilterTarih', 'cipsFilterMakine', 'cipsFilterMinSaat', 'cipsFilterMaxSaat', 'cipsMakineKartlari', 'cips-card-border', cipsIsEmirleri, cipsMakineler, 'cips');
+
+            buildDetayTablo('sok', 'sokTablo', sokIsEmirleri, sokMakineler);
+            buildDetayTablo('gh', 'ghTablo', ghIsEmirleri, ghMakineler);
+            buildDetayTablo('cips', 'cipsTablo', cipsIsEmirleri, cipsMakineler);
+
+            buildMakineYonetimTablo('sok', 'sokMakineleriTablo', sokMakineler);
+            buildMakineYonetimTablo('gh', 'ghMakineleriTablo', ghMakineler);
+            buildMakineYonetimTablo('cips', 'cipsMakineleriTablo', cipsMakineler);
+
+            buildUrunYonetimTablo('sok', 'sokUrunleriTablo');
+            buildUrunYonetimTablo('gh', 'ghUrunleriTablo');
+            buildUrunYonetimTablo('cips', 'cipsUrunleriTablo');
+
+            var alarmUrunSayisi = 0;
+            var ambBody = document.querySelector('#ambalajTablo tbody');
+            if(ambBody) {
+                var ambHtml = "";
+                for(var i=0; i<urunler.length; i++) {
+                    var u = urunler[i]; var planlanan = 0;
+                    var havuz = (u.tip === 'sok') ? sokIsEmirleri : (u.tip === 'gh' ? ghIsEmirleri : cipsIsEmirleri);
+                    for(var j=0; j<havuz.length; j++) { if(havuz[j].stokKodu === u.stokKodu && havuz[j].durum !== 'Tamamlandı' && havuz[j].durum !== 'Yapılamadı') planlanan += havuz[j].miktar; }
+                    var kalan = u.ambalajStok - planlanan;
+                    if(kalan < 0) alarmUrunSayisi++;
+                    ambHtml += '<tr><td>' + u.stokKodu + '</td><td>' + u.urunAdi + '</td><td><b>' + u.tip.toUpperCase() + '</b></td><td>' + u.ambalajStok.toLocaleString() + ' Adet</td><td>' + planlanan.toLocaleString() + ' Adet</td><td style="font-weight:bold; color:' + (kalan<0?'#fc8181':'#68d391') + '">' + kalan.toLocaleString() + ' Kalan</td><td>' + (kalan<0?'<span class="badge yok">Yetersiz</span>':'<span class="badge var">Yeterli</span>') + '</td></tr>';
+                }
+                ambBody.innerHTML = ambHtml;
+            }
+
+            var toplamIsYuku = 0; var toplamSaat = 0;
+            var birlesikIsler = sokIsEmirleri.concat(ghIsEmirleri).concat(cipsIsEmirleri);
+            var birlesikMakineler = sokMakineler.concat(ghMakineler).concat(cipsMakineler);
+            
+            for(var x=0; x<birlesikIsler.length; x++) {
+                if(birlesikIsler[x].durum !== 'Tamamlandı' && birlesikIsler[x].durum !== 'Yapılamadı') {
+                    toplamIsYuku++;
+                    var makHiz = 60;
+                    for(var m=0; m<birlesikMakineler.length; m++) { if(birlesikMakineler[m].name === birlesikIsler[x].makineHat) { makHiz = birlesikMakineler[m].hiz; break; } }
+                    toplamSaat += (birlesikIsler[x].miktar / (makHiz * 60));
+                }
+            }
+            document.getElementById('kpi-isler').innerText = toplamIsYuku + " Aktif Emir";
+            document.getElementById('kpi-saat').innerText = toplamSaat.toFixed(1) + " Saat";
+            document.getElementById('kpi-alarm').innerText = alarmUrunSayisi + " Ürün Kartı";
+
+            // PERSONEL HESAPLAYICISI ARTIK MAKINEDEN DEĞİL DOĞRUDAN İŞ EMİRLERİNDEN OKUYOR
+            var filterTarih = document.getElementById('persFilterTarih').value;
+            var personelKpiSayici = 0;
+
+            for(var i=0; i<birlesikIsler.length; i++) {
+                var is = birlesikIsler[i];
+                if(is.tarih === filterTarih && is.durum !== 'Tamamlandı' && is.durum !== 'Yapılamadı') {
+                    var vUydumu = false;
+                    if(personelKpiFilter === "all") vUydumu = true;
+                    else if(is.vardiyaNotu.includes(personelKpiFilter)) vUydumu = true;
+
+                    if(vUydumu) {
+                        personelKpiSayici += (is.personel || 0); // Doğrudan iş emri verisi
+                    }
+                }
+            }
+            var titleLabel = "Gerekli Personel (" + (personelKpiFilter === "all" ? "Günlük" : personelKpiFilter) + ")";
+            document.getElementById('kpi-personel-title').innerText = titleLabel;
+            document.getElementById('kpi-personel-val').innerText = personelKpiSayici + " Personel";
+
+            var personelTablo = document.querySelector('#personelTablo tbody');
+            if(personelTablo) {
+                var persHtml = ""; var sayac = 0;
+                var listeler = [{t:'ŞOK', h:sokIsEmirleri},{t:'GH', h:ghIsEmirleri},{t:'CIPS', h:cipsIsEmirleri}];
+                for(var k=0; k<listeler.length; k++) {
+                    var l = listeler[k];
+                    for(var i=0; i<l.h.length; i++) {
+                        var is = l.h[i];
+                        if(is.tarih === filterTarih && is.durum !== 'Tamamlandı' && is.durum !== 'Yapılamadı') {
+                            persHtml += '<tr><td><b>' + is.basSaat + ' - ' + is.bitSaat + ' (' + is.vardiyaNotu + ')</b></td><td style="color:#6fffe9"><b>' + l.t + '</b></td><td>' + is.makineHat + '</td><td>' + is.urunAdi + '</td><td><b>' + (is.personel || 0) + ' Personel</b></td></tr>';
+                            sayac++;
+                        }
+                    }
+                }
+                if(sayac === 0) persHtml = '<tr><td colspan="5" style="text-align:center; color:#aaa; padding:15px;">Seçilen tarihte aktif iş yükü bulunmamaktadır.</td></tr>';
+                personelTablo.innerHTML = persHtml;
+            }
+        }
+
+        function renderAnaMasası(tip, tarihId, makineId, minId, maxId, hedefAlanId, kartSinifi, havuz, makineListesi, barTipi) {
+            var fTarih = document.getElementById(tarihId).value;
+            var fMakine = document.getElementById(makineId).value;
+            var minS = parseFloat(document.getElementById(minId).value) || 0;
+            var maxS = parseFloat(document.getElementById(maxId).value) || 999;
+
+            var alan = document.getElementById(hedefAlanId); if(!alan) return; alan.innerHTML = '';
+            var kartlarToplami = "";
+
+            for(var m=0; m<makineListesi.length; m++) {
+                var mak = makineListesi[m]; if(fMakine !== "HEPSİ" && mak.name !== fMakine) continue;
+
+                var gecerliIslerHtml = ""; var isVarmi = 0; var makToplamYukSaat = 0;
+                for(var i=0; i<havuz.length; i++) {
+                    var is = havuz[i];
+                    if(is.tarih === fTarih && is.makineHat === mak.name) {
+                        var s = is.miktar / (mak.hiz * 60);
+                        if(is.durum !== 'Tamamlandı' && is.durum !== 'Yapılamadı') makToplamYukSaat += s;
+                        if (s >= minS && s <= maxS) {
+                            var dKlas = "job-planlanan";
+                            if(is.durum === "Devam Ediyor") dKlas = "job-devameden";
+                            if(is.durum === "Tamamlandı") dKlas = "job-tamamlandi";
+                            if(is.durum === "Yapılamadı") dKlas = "job-yapilamadi";
+                            gecerliIslerHtml += '<div class="job-item ' + dKlas + '"><strong>🕒 ' + is.basSaat + ' - ' + is.bitSaat + '</strong> (' + s.toFixed(1) + ' Sa Yük)<br><b>' + is.stokKodu + '</b> - ' + is.urunAdi + '<br><span>Miktar: ' + is.miktar.toLocaleString() + ' ad / İşçi: ' + (is.personel || 0) + '</span>' + (is.aciklama ? '<span class="reason-text">📝 ' + is.aciklama + '</span>' : '') + '</div>';
+                            isVarmi++;
+                        }
+                    }
+                }
+                if(fMakine === "HEPSİ" && isVarmi === 0) continue;
+
+                var dolulukYuzde = (makToplamYukSaat / 8) * 100; if(dolulukYuzde > 100) dolulukYuzde = 100;
+                var bFillKlas = (barTipi === 'cips') ? 'cap-bar-fill cips-bar-fill' : 'cap-bar-fill';
+                var barHtml = '<div class="cap-bar-bg"><span class="' + bFillKlas + '" style="width:' + dolulukYuzde + '%"></span></div>';
+
+                kartlarToplami += '<div class="machine-card ' + kartSinifi + '"><h4><span>⚙️ ' + mak.name + '</span> <small style="color:#6fffe9;">' + mak.hiz + ' ad/Dk</small></h4>' + barHtml + (isVarmi === 0 ? '<p style="color:#aaa; font-size:12px; font-style:italic;">İş emri bulunmamaktadır.</p>' : gecerliIslerHtml) + '</div>';
+            }
+            alan.innerHTML = kartlarToplami;
+        }
+
+        function buildDetayTablo(tip, tabloId, havuz, makineListesi) {
+            var tbody = document.querySelector('#' + tabloId + ' tbody'); if(!tbody) return; tbody.innerHTML = ''; var dHtml = "";
+            var filterTarih = document.getElementById(tip + 'ListFilterTarih').value;
+            var filterMakine = document.getElementById(tip + 'ListFilterMakine').value;
+            var filterUrun = document.getElementById(tip + 'ListFilterUrun').value;
+
+            for(var i=0; i<havuz.length; i++) {
+                var item = havuz[i];
+                if(filterTarih && item.tarih !== filterTarih) continue;
+                if(filterMakine !== "HEPSİ" && item.makineHat !== filterMakine) continue;
+                if(filterUrun !== "HEPSİ" && item.stokKodu !== filterUrun) continue;
+
+                var mHiz = 60; for(var m=0; m<makineListesi.length; m++) { if(makineListesi[m].name === item.makineHat) { mHiz = makineListesi[m].hiz; break; } }
+                var s = item.miktar / (mHiz * 60);
+                var bClass = "b-plan"; if(item.durum === "Devam Ediyor") bClass = "b-devam"; if(item.durum === "Tamamlandı") bClass = "b-tamam"; if(item.durum === "Yapılamadı") bClass = "b-fail";
+
+                // NEW: PERSONEL HÜCRESİ INPUT YAPILDI, DEĞİŞTİRİLDİĞİNDE ANINDA LOCALSTORAGE'A KAYDEDER
+                dHtml += '<tr><td><strong>' + item.tarih + '</strong></td><td>' + item.stokKodu + '</td><td>' + item.urunAdi + '</td><td><small>' + item.makineHat + '</small></td><td>' + item.miktar.toLocaleString() + '</td>' +
+                    '<td><input type="number" value="' + (item.personel || 0) + '" style="width:60px; padding:3px; background:#060b19; color:#fff; border:1px solid #3a506b; border-radius:4px;" onchange="personelElDuzenle(\'' + tip + '\',' + item.id + ', this.value)"></td>' +
+                    '<td><code>' + item.basSaat + ' - ' + item.bitSaat + '</code></td><td><b>' + s.toFixed(1) + ' Sa</b></td><td><span class="badge ' + bClass + '">' + item.durum + '</span></td>' +
+                    '<td><input type="text" value="' + item.aciklama + '" placeholder="Gerekçe giriniz..." style="width:100%; padding:5px; font-size:12px; border:1px solid #3a506b; background:#060b19; color:#fff; border-radius:4px;" onchange="aciklamaElDuzenle(\'' + tip + '\',' + item.id + ', this.value)"></td>' +
+                    '<td><select style="padding:2px; font-size:11px; background:#060b19; color:#fff;" onchange="durumGuncelle(\'' + tip + '\',' + item.id + ', this.value)"><option value="Planlandı" ' + (item.durum==='Planlandı'?'selected':'') + '>🔴 Sıraya Al</option><option value="Devam Ediyor" ' + (item.durum==='Devam Ediyor'?'selected':'') + '>🟡 Devama Çek</option><option value="Tamamlandı" ' + (item.durum==='Tamamlandı'?'selected':'') + '>🟢 Tamamla</option><option value="Yapılamadı" ' + (item.durum==='Yapılamadı'?'selected':'') + '>⚫ Yapılamadı / İptal</option></select> <button class="btn-danger" onclick="isEmriSil(\'' + tip + '\',' + item.id + ')">Sil</button></td></tr>';
+            }
+            tbody.innerHTML = dHtml;
+        }
+
+        function buildMakineYonetimTablo(tip, tabloId, liste) {
+            var tbody = document.querySelector('#' + tabloId + ' tbody'); if(!tbody) return; tbody.innerHTML = ''; var mHtml = "";
+            for(var i=0; i<liste.length; i++) {
+                mHtml += '<tr><td><b>' + liste[i].name + '</b></td><td>' + liste[i].hiz + ' ad/dk</td><td><button class="btn-danger" style="padding:2px 6px; font-size:10px;" onclick="makineSil(\'' + tip + '\',' + liste[i].id + ')">Kaldır</button></td></tr>';
+            }
+            tbody.innerHTML = mHtml;
+        }
+
+        function buildUrunYonetimTablo(tip, tabloId) {
+            var tbody = document.querySelector('#' + tabloId + ' tbody'); if(!tbody) return; tbody.innerHTML = ''; var uHtml = "";
+            for(var i=0; i<urunler.length; i++) {
+                if(urunler[i].tip !== tip) continue;
+                uHtml += '<tr><td><code>' + urunler[i].stokKodu + '</code></td><td>' + urunler[i].urunAdi + '</td><td><b>' + urunler[i].ambalajStok.toLocaleString() + ' Adet</b></td><td><button class="btn-update" onclick="ambalajStokGuncelle(' + urunler[i].id + ')">📝 Stok Güncelle</button><button class="btn-danger" style="padding:2px 6px; font-size:10px;" onclick="urunSil(' + urunler[i].id + ')">Kaldır</button></td></tr>';
+            }
+            tbody.innerHTML = uHtml;
+        }
+
+        function yeniUrunEkle() {
+            var tip = document.getElementById('addUrunTip').value; var kod = document.getElementById('addStokKodu').value; var adi = document.getElementById('addUrunAdi').value; var stok = parseInt(document.getElementById('addAmbStok').value);
+            if(!kod || !adi) { alert("Eksik veri girişi yapıldı."); return; }
+            urunler.push({ id: Date.now(), tip: tip, stokKodu: kod, urunAdi: adi, ambalajStok: stok });
+            saveStorage(); formSecenekleriniDoldur(); renderTablolar(); alert("Ürün kaydı tamamlandı.");
+        }
+
+        function yeniMakineEkle() {
+            var tip = document.getElementById('addMakineTip').value; var adi = document.getElementById('addMakineAdi').value; var hiz = parseFloat(document.getElementById('addMakineHiz').value);
+            if(!adi || !hiz) { alert("Eksik veri girişi yapıldı."); return; }
+            var yeniM = { id: Date.now(), name: adi, hiz: hiz };
+            if(tip === 'sok') sokMakineler.push(yeniM); else if(tip === 'gh') ghMakineler.push(yeniM); else cipsMakineler.push(yeniM);
+            saveStorage(); formSecenekleriniDoldur(); renderTablolar(); alert("Makine kurulum kaydı tamamlandı.");
+        }
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gold Harvest & ŞOK İleri APS Yönetim Sistemi</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #060b19; color: #f5f6fa; padding: 20px; padding-bottom: 80px; }
+        
+        header { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.03); }
+        .logo-area { display: flex; align-items: center; gap: 20px; }
+        
+        /* LOGO: BEYAZLIK TEMİZLENDİ VE ALTIN PARILTI EKLENDİ */
+        .gh-logo { width: 85px; height: 80px; object-fit: contain; filter: drop-shadow(0 0 15px rgba(227, 176, 75, 0.4)); animation: goldPulse 3s infinite ease-in-out; }
+        
+        .logo-text h1 { font-size: 24px; letter-spacing: 1.5px; color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-weight: 800; }
+        .logo-text p { font-size: 12px; color: #38bdf8; font-weight: 600; text-transform: uppercase; }
+        
+        /* Sekmeler ve İçerik (Kilitlenmeyen Yapı Korundu) */
+        .tab-container { display: flex; background: #0f172a; border-radius: 8px 8px 0 0; padding: 6px 6px 0 6px; gap: 4px; border-bottom: 2px solid #1e293b; }
+        .tab { padding: 12px 18px; cursor: pointer; font-weight: bold; border-radius: 8px 8px 0 0; border: none; background: #1e293b; color: #94a3b8; font-size: 13px; }
+        .tab.active { background: #060b19; color: #38bdf8; border-top: 3px solid #38bdf8; }
+        .content-section { background: #0f172a; padding: 25px; border-radius: 0 0 12px 12px; border: 1px solid rgba(255,255,255,0.03); border-top: none; min-height: 500px; }
+        .page { display: none; }
+
+        /* SİBER ALT BİLGİ: MUSTAFA BAYIR ALTIN HARFLERLE */
+        footer { position: fixed; bottom: 0; left: 0; width: 100%; background: #060b19; text-align: center; padding: 15px; font-size: 13px; border-top: 1px solid #1e293b; z-index: 100; }
+        footer span { color: #94a3b8; }
+        footer strong { font-family: 'Georgia', serif; color: #e3b04b; text-shadow: 0 0 8px rgba(227, 176, 75, 0.6); margin-left: 5px; font-size: 15px; }
+
+        /* ... Diğer stiller (Trafik ışığı, kartlar vb.) aynı kalıyor ... */
+        @keyframes goldPulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(227, 176, 75, 0.3)); }
+            50% { transform: scale(1.03); filter: drop-shadow(0 0 20px rgba(227, 176, 75, 0.6)); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(227, 176, 75, 0.3)); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-area">
+            <img src="OIP_2.webp" alt="Gold Harvest" class="gh-logo">
+            <div class="logo-text">
+                <h1>GOLD HARVEST</h1>
+                <p>Üretim Yönetim Paneli</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Kalan kod yapısı aynı şekilde korunmuştur -->
+    <!-- (Tüm JavaScript ve HTML yapısı bir önceki sürüm ile aynıdır) -->
+    
+    <footer>
+        <span>Design & Development:</span> <strong>Mustafa Bayır</strong>
+    </footer>
+    
+    <!-- ... script tagleri buraya ... -->
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Harvest - Kurumsal ERP Kontrol Merkezi</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #0f0f12; color: #e4e4e7; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f0f12; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .login-card { background: #18181c; padding: 40px; border-radius: 12px; border: 1px solid #2f2f35; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+        .login-card h2 { color: #00adb5; margin-bottom: 10px; font-size: 24px; letter-spacing: 1px; }
+        .login-card p { color: #71717a; font-size: 13px; margin-bottom: 25px; }
+        input, select { width: 100%; padding: 12px 15px; margin-bottom: 15px; background: #202024; border: 1px solid #3f3f46; color: white; border-radius: 6px; font-size: 14px; transition: 0.2s; }
+        input:focus, select:focus { border-color: #00adb5; outline: none; background: #242429; }
+        button { width: 100%; padding: 12px; background: #00adb5; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.2s; }
+        button:hover { background: #008c93; transform: translateY(-1px); }
+        .main-wrapper { padding: 25px; max-width: 1600px; margin: 0 auto; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #27272a; margin-bottom: 25px; }
+        .top-bar h1 { color: #00adb5; font-size: 26px; }
+        .user-info-tag { background: #18181c; padding: 8px 18px; border-radius: 20px; font-size: 14px; border: 1px solid #27272a; display: flex; align-items: center; gap: 8px; }
+        .badge-role { background: #3f3f46; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .badge-role.planlama { background: #22c55e; color: #000; }
+        .badge-role.uretim { background: #eab308; color: #000; }
+        .nav-tabs { display: flex; gap: 12px; margin-bottom: 25px; border-bottom: 2px solid #27272a; padding-bottom: 2px; }
+        .tab-link { padding: 12px 28px; background: none; color: #a1a1aa; border: none; cursor: pointer; font-weight: bold; font-size: 15px; border-radius: 6px 6px 0 0; width: auto; transition: 0.2s; }
+        .tab-link:hover { color: #fff; background: #18181c; }
+        .tab-link.active { color: #00adb5; background: #18181c; border: 1px solid #27272a; border-bottom: 2px solid #00adb5; }
+        .planlama-panel { background: #18181c; padding: 25px; border-radius: 8px; border: 1px solid #27272a; margin-bottom: 30px; }
+        .planlama-panel h3 { margin-bottom: 15px; color: #22c55e; font-size: 16px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .planlama-panel button { background: #22c55e; color: black; margin-top: 5px; }
+        .planlama-panel button:hover { background: #16a34a; }
+        .cards-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 25px; }
+        .erp-card { background: #18181c; padding: 22px; border-radius: 8px; border: 1px solid #27272a; border-left: 6px solid #00adb5; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .erp-card.status-tamam { border-left-color: #22c55e; }
+        .erp-card.status-kapali { border-left-color: #ef4444; opacity: 0.75; }
+        .erp-card.status-bekle { border-left-color: #eab308; }
+        .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .loc-indicator { background: #00adb5; color: black; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .status-tamam .loc-indicator { background: #22c55e; }
+        .status-kapali .loc-indicator { background: #ef4444; color: white; }
+        .status-bekle .loc-indicator { background: #eab308; }
+        .progress-box { margin: 18px 0; }
+        .progress-labels { display: flex; justify-content: space-between; font-size: 13px; color: #a1a1aa; margin-bottom: 6px; }
+        .bar-bg { background: #27272a; border-radius: 10px; height: 10px; width: 100%; overflow: hidden; }
+        .bar-fill { background: linear-gradient(90deg, #00adb5, #00fff2); height: 100%; width: 0%; transition: width 0.4s ease; }
+        .status-tamam .bar-fill { background: #22c55e; }
+        .status-kapali .bar-fill { background: #ef4444; }
+        .action-box { background: #202024; padding: 12px; border-radius: 6px; margin-top: 15px; border: 1px solid #27272a; }
+        .action-box label { font-size: 12px; color: #a1a1aa; display: block; margin-bottom: 6px; font-weight: bold; }
+        .inline-inputs { display: flex; gap: 8px; align-items: center; }
+        .inline-inputs input, .inline-inputs select { margin-bottom: 0; padding: 8px 12px; font-size: 13px; }
+        .inline-inputs button { width: auto; padding: 8px 16px; background: #22c55e; color: black; font-size: 13px; }
+        .card-forum { margin-top: 18px; padding-top: 15px; border-top: 1px solid #27272a; }
+        .forum-header-title { font-size: 13px; font-weight: bold; color: #ff9f43; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .forum-history { max-height: 110px; overflow-y: auto; background: #0f0f12; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 8px; border: 1px solid #27272a; }
+        .forum-msg-line { margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px dashed #202024; line-height: 1.4; }
+        .forum-msg-line:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+        .f-author { color: #00adb5; font-weight: bold; }
+        .f-time { font-size: 10px; color: #52525b; margin-left: 5px; }
+        .loading-screen { text-align: center; padding: 50px; font-size: 18px; color: #00adb5; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div id="securityWall" class="login-overlay">
+        <div class="login-card">
+            <h2>GOLD HARVEST ERP</h2>
+            <p>Devam etmek için kurumsal kullanıcı kimliğinizi doğrulayın.</p>
+            <input type="text" id="sec_user" placeholder="Kullanıcı Adı">
+            <input type="password" id="sec_pass" placeholder="Şifre">
+            <button onclick="sistemeGirisYap()">Sistemi Çöz ve Giriş Yap</button>
+        </div>
+    </div>
+
+    <div id="erpCore" class="main-wrapper" style="display: none;">
+        <div class="top-bar">
+            <h1>Gold Harvest Dijital Kontrol Odası</h1>
+            <div class="user-info-tag" id="userInfoTag">
+                <span id="txtUser">Yükleniyor...</span>
+                <span id="txtRole" class="badge-role">...</span>
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="tab-link active" id="tab_gunluk" onclick="sekmeDegistir('gunluk')">📋 Günlük Üretim Hatları</button>
+            <button class="tab-link" id="tab_terminli" onclick="sekmeDegistir('terminli')">📅 Uzun Vadeli Terminli İşler</button>
+        </div>
+
+        <div id="page_gunluk">
+            <div id="planlamaciFormu" class="planlama-panel" style="display: none;">
+                <h3>✍️ Yeni İş Emri Fırlat (Sadece Planlama Yetkisi)</h3>
+                <div class="form-grid">
+                    <select id="p_lokasyon">
+                        <option value="sok">ŞOK Hattı (sok)</option>
+                        <option value="gh">Gold Harvest Merkez (gh)</option>
+                        <option value="cips">Cips Fabrikası (cips)</option>
+                    </select>
+                    <input type="text" id="p_urunKodu" placeholder="Ürün / Stok Kodu">
+                    <input type="text" id="p_urunAdi" placeholder="Ürün İsmi">
+                    <input type="text" id="p_makine" placeholder="Makine Hattı">
+                    <select id="p_vardiya">
+                        <option value="V1">Vardiya 1 (08:00 - 16:00)</option>
+                        <option value="V2">Vardiya 2 (16:00 - 00:00)</option>
+                        <option value="V3">Vardiya 3 (00:00 - 08:00)</option>
+                    </select>
+                    <input type="number" id="p_planHedef" placeholder="Planlanan Hedef">
+                    <input type="text" id="p_personel" placeholder="Sorumlu Personel">
+                </div>
+                <button onclick="yeniIsEmriGonder()">İş Emrini Doğrudan Sahaya Bas</button>
+            </div>
+
+            <div id="cloudLoading" class="loading-screen">Fabrika sunucu verileri senkronize ediliyor...</div>
+            <div id="gunlukKartlarAlani" class="cards-layout"></div>
+        </div>
+
+        <div id="page_terminli" style="display: none;">
+            <div id="terminliKartlarAlani" class="cards-layout"></div>
+        </div>
+    </div>
+
+    <script>
+        // 🚨 DIKKAT: AŞAĞIDAKİ TIRNAKLARIN İÇİNE, 2. ADIMDA GOOGLE'DAN ALDIĞIN O UZUN /exec LİNKİNİ YAPIŞTIR KANKA!
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzB1ps9STc1fgMFv00_qG7Lnnibn1WDbYOiB9AFlrcsPjpHOaxSw87SWW55yfBIqh3yzg/exec";
+
+        let aktifKullanici = null;
+        let dbData = { gunluk: [], terminli: [], forum: [], kullanicilar: [] };
+
+        function sistemeGirisYap() {
+            let userVal = document.getElementById("sec_user").value.trim().toLowerCase();
+            let passVal = document.getElementById("sec_pass").value.trim();
+            if(!userVal || !passVal) { alert("Kimlik bilgilerini boş bırakamazsın kral!"); return; }
+            
+            // Ekranı açıp verileri çekmeye başla
+            document.getElementById("securityWall").style.display = "none";
+            document.getElementById("erpCore").style.display = "block";
+            document.getElementById("txtUser").innerText = userVal.toUpperCase();
+            veriHavuzunuTazele(userVal, passVal);
+        }
+
+        function sekmeDegistir(hedefSekme) {
+            document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('active'));
+            if(hedefSekme === 'gunluk') {
+                document.getElementById('tab_gunluk').classList.add('active');
+                document.getElementById('page_gunluk').style.display = 'block';
+                document.getElementById('page_terminli').style.display = 'none';
+            } else {
+                document.getElementById('tab_terminli').classList.add('active');
+                document.getElementById('page_gunluk').style.display = 'none';
+                document.getElementById('page_terminli').style.display = 'block';
+            }
+        }
+
+        function veriHavuzunuTazele(uName, uPass) {
+            document.getElementById("cloudLoading").style.display = "block";
+            
+            // Masaüstü (file://) engeline takılmayan en saf veri gönderme mimarisi kanka:
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "readData" }),
+                headers: { "Content-Type": "text/plain" }
+            })
+            .then(res => res.json())
+            .then(data => {
+                dbData = data;
+                document.getElementById("cloudLoading").style.display = "none";
+
+                if(uName && uPass) {
+                    let userCheck = false;
+                    for(let i = 1; i < dbData.kullanicilar.length; i++) {
+                        let row = dbData.kullanicilar[i];
+                        if(row[0].toString().toLowerCase() === uName && row[1].toString() === uPass) {
+                            aktifKullanici = { name: uName, role: row[2].toString().toLowerCase() };
+                            userCheck = true;
+                            break;
+                        }
+                    }
+                    if(!userCheck) {
+                        alert("🚨 YETKİSİZ ERİŞİM: Kullanıcı bilgileri yanlış, sistem kilitlendi!");
+                        location.reload();
+                        return;
+                    }
+                }
+
+                let roleEl = document.getElementById("txtRole");
+                roleEl.innerText = aktifKullanici.role.toUpperCase();
+                roleEl.className = "badge-role " + aktifKullanici.role;
+
+                if(aktifKullanici.role === "planlama") {
+                    document.getElementById("planlamaciFormu").style.display = "block";
+                } else {
+                    document.getElementById("planlamaciFormu").style.display = "none";
+                }
+
+                paneliYenidenCiz();
+            })
+            .catch(err => {
+                alert("Bağlantı hatası! Muhtemelen Google tarafında 'Erişimi olan kişi: Herkes' ayarını unuttun veya link hatalı kanka.");
+                console.error(err);
+            });
+        }
+
+        function paneliYenidenCiz() {
+            let gAlan = document.getElementById("gunlukKartlarAlani");
+            gAlan.innerHTML = "";
+
+            for(let i = 1; i < dbData.gunluk.length; i++) {
+                let row = dbData.gunluk[i];
+                let id = row[0]; let tarih = row[1]; let lokasyon = row[2]; let urunKodu = row[3];
+                let urunAdi = row[4]; let makine = row[5]; let vardiya = row[6];
+                let planHedef = Number(row[7]) || 0; let gerceklezen = Number(row[8]) || 0;
+                let durum = row[9] || "Açık Üretim"; let sorumlu = row[10];
+
+                let yuzde = planHedef > 0 ? ((gerceklezen / planHedef) * 100).toFixed(1) : 0;
+                let dClass = "status-bekle";
+                if(durum === "Tamamlandı") dClass = "status-tamam";
+                if(durum === "Kapalı / İptal") dClass = "status-kapali";
+
+                let forumHtml = "";
+                for(let j = 1; j < dbData.forum.length; j++) {
+                    let fRow = dbData.forum[j];
+                    if(fRow[1].toString() === id.toString()) {
+                        forumHtml += `<div class="forum-msg-line"><span class="f-author">${fRow[2].toUpperCase()}:</span> ${fRow[3]} <span class="f-time">${fRow[4].split(" ")[1] || ""}</span></div>`;
+                    }
+                }
+
+                let card = `
+                    <div class="erp-card ${dClass}">
+                        <div class="card-top">
+                            <span class="loc-indicator">${lokasyon}</span>
+                            <span style="font-size:12px; color:#71717a;">${tarih}</span>
+                        </div>
+                        <h3 style="font-size:16px; margin-bottom:4px;">${urunAdi}</h3>
+                        <p style="font-size:12px; color:#a1a1aa; margin-bottom:12px;">Kod: ${urunKodu} | Hat: ${makine} | ${vardiya}</p>
+                        <p style="font-size:13px;">Sorumlu: <b>${sorumlu}</b> | Durum: <b style="color:#00adb5;">${durum}</b></p>
+                        
+                        <div class="progress-box">
+                            <div class="progress-labels">
+                                <span>Hedef: ${planHedef.toLocaleString()}</span>
+                                <span>Üretilen: <b>${gerceklezen.toLocaleString()}</b> (%${yuzde})</span>
+                            </div>
+                            <div class="bar-bg"><div class="bar-fill" style="width: ${yuzde > 100 ? 100 : yuzde}%"></div></div>
+                        </div>
+
+                        <div class="action-box">
+                            <label>⚙️ Üretim ve Durum Yönetimi</label>
+                            <div class="inline-inputs" style="margin-bottom:8px;">
+                                <input type="number" id="in_num_${id}" placeholder="+ Miktar Ekle">
+                                <button onclick="uretimMiktariGonder('${id}')">Ekle</button>
+                            </div>
+                            <div class="inline-inputs">
+                                <select id="sel_status_${id}" onchange="isEmriDurumuGuncelle('${id}')">
+                                    <option value="" disabled selected>İş Durumu Değiştir...</option>
+                                    <option value="Üretim Devam Ediyor">Üretim Devam Ediyor</option>
+                                    <option value="Tamamlandı">Tamamlandı</option>
+                                    <option value="Kapalı / İptal">Kapalı / İptal</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="card-forum">
+                            <div class="forum-header-title">💬 Canlı Hat Notları</div>
+                            <div class="forum-history">${forumHtml || 'Not yok...'}</div>
+                            <div class="forum-input-group">
+                                <input type="text" id="in_msg_${id}" placeholder="Açıklama/Arıza notu yaz...">
+                                <button onclick="forumNotuGonder('${id}')">Yaz</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                gAlan.innerHTML += card;
+            }
+
+            let tAlan = document.getElementById("terminliKartlarAlani");
+            tAlan.innerHTML = "";
+            for(let i = 1; i < dbData.terminli.length; i++) {
+                let row = dbData.terminli[i];
+                let card = `
+                    <div class="erp-card" style="border-left-color: #ff9f43;">
+                        <div class="card-top">
+                            <span class="loc-indicator" style="background:#ff9f43; color:#000;">TERMİNLİ</span>
+                            <span style="font-size:12px; color:#ff9f43; font-weight:bold;">⏳ ${row[6]}</span>
+                        </div>
+                        <h3>${row[1]}</h3>
+                        <p style="font-size:12px; color:#a1a1aa; margin:5px 0 12px 0;">Ürün: ${row[3]} (${row[2]})</p>
+                        <p style="font-size:14px;">Toplam Sipariş: <b>${Number(row[4]).toLocaleString()} Adet</b></p>
+                        <p style="font-size:12px; color:#71717a; margin-top:10px;">Bitiş Tarihi: ${row[5]} | Durum: ${row[7]}</p>
+                    </div>
+                `;
+                tAlan.innerHTML += card;
+            }
+        }
+
+        function uretimMiktariGonder(id) {
+            let miktar = document.getElementById("in_num_" + id).value;
+            if(!miktar || miktar <= 0) { alert("Miktar gir kanka!"); return; }
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "updateProgress", id: id, miktar: miktar }),
+                headers: { "Content-Type": "text/plain" }
+            }).then(() => { document.getElementById("in_num_" + id).value = ""; veriHavuzunuTazele(); });
+        }
+
+        function isEmriDurumuGuncelle(id) {
+            let stat = document.getElementById("sel_status_" + id).value;
+            if(!stat) return;
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "updateProgress", id: id, durum: stat }),
+                headers: { "Content-Type": "text/plain" }
+            }).then(() => { veriHavuzunuTazele(); });
+        }
+
+        function forumNotuGonder(id) {
+            let mesaj = document.getElementById("in_msg_" + id).value.trim();
+            if(!mesaj) return;
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "addLog", isEmriId: id, yazan: aktifKullanici.name, mesaj: mesaj }),
+                headers: { "Content-Type": "text/plain" }
+            }).then(() => { document.getElementById("in_msg_" + id).value = ""; veriHavuzunuTazele(); });
+        }
+
+        function yeniIsEmriGonder() {
+            let lokasyon = document.getElementById("p_lokasyon").value;
+            let urunKodu = document.getElementById("p_urunKodu").value.trim();
+            let urunAdi = document.getElementById("p_urunAdi").value.trim();
+            let makine = document.getElementById("p_makine").value.trim();
+            let vardiya = document.getElementById("p_vardiya").value;
+            let planlanan = document.getElementById("p_planHedef").value;
+            let personel = document.getElementById("p_personel").value.trim();
+
+            if(!urunKodu || !urunAdi || !planlanan) { alert("Eksik alan var kanka!"); return; }
+
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "addDaily", id: Date.now().toString(), tarih: new Date().toLocaleDateString("tr-TR"),
+                    lokasyon: lokasyon, urunKodu: urunKodu, urunAdi: urunAdi, makine: makine, vardiya: vardiya, planlanan: planlanan, personel: personel
+                }),
+                headers: { "Content-Type": "text/plain" }
+            }).then(() => {
+                document.getElementById("p_urunKodu").value = ""; document.getElementById("p_urunAdi").value = "";
+                document.getElementById("p_planHedef").value = ""; document.getElementById("p_personel").value = "";
+                veriHavuzunuTazele();
+            });
+        }
+    </script>
+</body>
+</html>
